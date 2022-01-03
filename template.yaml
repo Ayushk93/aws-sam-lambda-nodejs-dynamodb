@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AK DEV AWS SAM POC
+
+Globals:
+  Function:
+    MemorySize: 128
+
+Resources:
+  APIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs14.x
+      Handler: function.lambdaHandler
+      Policies:
+        - AmazonDynamoDBFullAccess
+      CodeUri: api/
+      Timeout: 3
+      Events:
+        CreateData:
+          Type: Api
+          Properties:
+            Path: /createData
+            Method: POST
+            # RestApiId:
+            #   Ref: CreateAPI
+        GetData:
+          Type: Api
+          Properties:
+            Path: /getData
+            Method: GET
+        UpdateData:
+          Type: Api
+          Properties:
+            Path: /updateData
+            Method: PUT
+        DeleteData:
+          Type: Api
+          Properties:
+            Path: /deleteData
+            Method: DELETE
+        AllData:
+          Type: Api
+          Properties:
+            Path: /allData
+            Method: GET
+
+  # CreateAPI:
+  #   Type: AWS::Serverless::Api
+  #   Properties:
+  #     StageName: staging
+  #     OpenApiVersion: 3.0.3
+  
+  AkTestDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  BackendUrl:
+    Description: API Gateway backend URL
+    Value: "Success"
